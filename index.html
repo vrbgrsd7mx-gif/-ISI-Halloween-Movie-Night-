@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ISI Halloween Movie Night — Register</title>
+  <style>
+    :root{--bg:#0f0f12;--card:#222;--accent:#ff8800;--muted:#bdbdbd}
+    body{
+      margin:0;font-family:Inter,Arial,Helvetica,sans-serif;
+      background:linear-gradient(180deg,#070709 0%, #121216 100%);
+      color:#fff;display:flex;align-items:center;justify-content:center;
+      min-height:100vh;padding:24px;
+    }
+    .container{width:100%;max-width:420px;text-align:center;}
+    .card{background:var(--card);padding:26px;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.6);}
+    h1{margin:0 0 6px;color:var(--accent);font-size:22px}
+    p.lead{margin:0 0 16px;color:var(--muted)}
+    .price{background:rgba(255,136,0,0.12);display:inline-block;padding:6px 10px;border-radius:8px;color:var(--accent);font-weight:700;margin-bottom:14px}
+    form{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+    input[type="text"], input[type="tel"]{
+      padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);
+      background:#0b0b0b;color:#fff;font-size:15px;outline:none;
+    }
+    input::placeholder{color:#9e9e9e}
+    button{
+      padding:12px;border-radius:10px;border:none;font-weight:700;
+      background:var(--accent);color:#08120a;cursor:pointer;font-size:15px;
+    }
+    #message{margin-top:12px;color:#b9f6ca;font-weight:600}
+    .small{font-size:13px;color:var(--muted);margin-top:10px}
+    footer{margin-top:14px;color:#888;font-size:12px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card" role="region" aria-label="Registration card">
+      <h1>ISI Halloween Movie Night 🎃</h1>
+      <p class="lead">Join us for a spooky movie night — limited seats available.</p>
+
+      <div class="price">$6 — per ticket</div>
+
+      <!-- Form submits directly to your Google Form (formResponse URL) -->
+      <form id="registrationForm" action="https://docs.google.com/forms/d/e/1FAIpQLSeCbvmbyVymJ7BOVZ-Ccf1EFpy2mVLdWH3inUnVyHfs5_c7og/formResponse" method="POST" target="hidden_iframe" autocomplete="off">
+        <input type="text" name="entry.864872640" id="fullname" placeholder="Full Name" required aria-label="Full Name" />
+        <input type="tel" name="entry.203370888" id="phone" placeholder="Phone Number" required aria-label="Phone Number" />
+        <button type="submit" aria-label="Register">Register — $6</button>
+      </form>
+
+      <!-- hidden iframe prevents redirect to Google Forms UI -->
+      <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+      <p id="message" role="status" aria-live="polite"></p>
+      <p class="small">Note: This page only registers attendance and records contact info. Payment is not processed here.</p>
+    </div>
+
+    <footer>Make sure the Google Form is not restricted to your organization so outside visitors can submit.</footer>
+  </div>
+
+  <script>
+    (function(){
+      const form = document.getElementById('registrationForm');
+      const msg = document.getElementById('message');
+      // store last typed name so we can show it after form reset
+      let lastName = '';
+
+      // before submit, capture the name value so we can show it after
+      form.addEventListener('submit', function(e){
+        lastName = document.getElementById('fullname').value.trim();
+        // show immediate feedback while submission is in progress
+        msg.style.color = '#fff';
+        msg.textContent = 'Sending registration…';
+        // allow the form to submit to the hidden iframe (no e.preventDefault)
+        // after small delay, show confirmation (Google Forms sometimes needs ~1s)
+        setTimeout(function(){
+          msg.style.color = '#b9f6ca';
+          const displayName = lastName || 'Guest';
+          msg.textContent = `Thank you, ${displayName}! Your registration for ISI Halloween Movie Night has been received. Ticket price: $6.`;
+          form.reset();
+        }, 900);
+      });
+
+      // optional: when the hidden iframe loads (response returned), you could detect errors
+      // but Google Forms returns HTML, cross-origin prevents reading success. So we rely on timeout.
+    })();
+  </script>
+</body>
+</html>
